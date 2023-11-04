@@ -1,0 +1,24 @@
+services:
+  deliverypicker-frontend:
+    build: ./frontend
+    container_name: deliverypicker-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/usr/src/app
+    networks:
+      - deliverypickernetwork
+
+  deliverypicker-backend:
+    build: ./backend
+    container_name: deliverypicker-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/usr/src/app
+    networks:
+      - deliverypickernetwork
+
+networks:
+  deliverypickernetwork:
+    driver: bridge
