@@ -50,20 +50,10 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 
-
-const distance = [
-  {label: '+1 km', value: 1},
-  {label: '+2 km', value: 2},
-  {label: '+5 km', value: 5},
-  {label: '+10 km', value: 10},
-  {label: '+15 km', value: 15},
-  {label: '+20 km', value: 20},
-  {label: 'any km', value: 0}
-]
-
 export default function PersistentLeftDrawer() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
+  const [restaurantFilter, setRestaurantFilter] = React.useState("");
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -125,7 +115,8 @@ export default function PersistentLeftDrawer() {
               <TextField
                 id="outlined-basic"
                 label="Search"
-                defaultValue=""
+                value={restaurantFilter}
+                onChange={event => setRestaurantFilter(event.target.value)}
               />
               <DistanceVariants />
             </Stack>
@@ -133,7 +124,9 @@ export default function PersistentLeftDrawer() {
         </Box>
 
         <Divider textAlign='center'><Chip label="Restaurants" /></Divider>
-          <ResultsList />
+
+        <ResultsList filterValue={restaurantFilter} />
+
         <Divider />
 
       </Drawer>
