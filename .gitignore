@@ -134,4 +134,4 @@ __pycache__/
 db.sqlite3
 postgres/
 images/
-
+.python-version

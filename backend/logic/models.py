@@ -1,6 +1,5 @@
 from django.db import models
 
-# Create your models here.
 
 class Promotion(models.Model):
     details = models.TextField()
@@ -20,6 +19,9 @@ class Location(models.Model):
     latitude = models.TextField()
     longtitude = models.TextField()
 
+    def __str__(self):
+        return f'{self.street}, {self.city}, {self.latitude}, {self.longtitude}'
+
 
 class Cuisine(models.Model):
     name = models.TextField()
@@ -36,7 +38,7 @@ class Restaurant(models.Model):
     name = models.TextField()
     promotion_id = models.ForeignKey(Promotion, on_delete=models.DO_NOTHING, blank=True, null=True)
     cuisine_id = models.ManyToManyField(Cuisine)
-    location_id = models.OneToOneField(Location, on_delete=models.DO_NOTHING)
+    location_id = models.OneToOneField(Location, on_delete=models.CASCADE)
     
     def __str__(self):
         return f'{self.name}'
