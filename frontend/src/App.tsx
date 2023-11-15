@@ -9,7 +9,6 @@ function App() {
       <div className="map-slot">
       <MapView />
       </div>
-      
     </div>
   );
 }
