@@ -7,17 +7,31 @@ import Chip from '@mui/material/Chip';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
+import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Pagination from '@mui/material/Pagination';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { styled, useTheme } from '@mui/material/styles';
 import * as React from 'react';
-import DistanceVariants from './distance';
 import ResultsList from './results';
 
 const drawerWidth = 360;
+
+const distance_options = [
+  {label: '+1 km', value: 1},
+  {label: '+2 km', value: 2},
+  {label: '+5 km', value: 5},
+  {label: '+10 km', value: 10},
+  {label: '+15 km', value: 15},
+  {label: '+20 km', value: 20},
+  {label: 'any km', value: 0}
+]
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -50,20 +64,20 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 
-
-const distance = [
-  {label: '+1 km', value: 1},
-  {label: '+2 km', value: 2},
-  {label: '+5 km', value: 5},
-  {label: '+10 km', value: 10},
-  {label: '+15 km', value: 15},
-  {label: '+20 km', value: 20},
-  {label: 'any km', value: 0}
-]
-
 export default function PersistentLeftDrawer() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
+  const [restaurantFilter, setRestaurantFilter] = React.useState("");
+  const [page, setPage] = React.useState(1);
+  const [distance, setDistance] = React.useState('0');
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setDistance(event.target.value);
+  };
+
+  const handlePaginationChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -125,17 +139,34 @@ export default function PersistentLeftDrawer() {
               <TextField
                 id="outlined-basic"
                 label="Search"
-                defaultValue=""
+                value={restaurantFilter}
+                onChange={event => setRestaurantFilter(event.target.value)}
               />
-              <DistanceVariants />
+              <div>
+                <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                  <InputLabel id="demo-simple-select-standard-label">Distance</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-standard-label"
+                    id="demo-simple-select-standard"
+                    value={distance}
+                    onChange={handleChange}
+                    label="Distance"
+                  >
+                    {distance_options.map((distance) => (
+                  <MenuItem value={distance.value}><em>{distance.label}</em></MenuItem>
+                  ))}
+                  </Select>
+                </FormControl>
+              </div>
             </Stack>
           </div>
         </Box>
 
         <Divider textAlign='center'><Chip label="Restaurants" /></Divider>
-          <ResultsList />
+        <ResultsList filterValue={restaurantFilter} />
         <Divider />
 
+        <Pagination count={10} page={page} onChange={handlePaginationChange} />
       </Drawer>
     </Box>
   );
