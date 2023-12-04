@@ -1,9 +1,13 @@
+
 import L from 'leaflet';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import "leaflet/dist/leaflet.css";
-import { useEffect, useState } from 'react';
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import { useContext, useEffect, useState } from 'react';
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import config from '../../config.json';
+import mapPositionContext from '../../utils/mapcontext';
+import DetailsMarker from './marker';
 
 let DefaultIcon = L.icon({
   iconUrl: icon,
@@ -12,8 +16,6 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const position = [50.86079, 17.4674]
-
 export default function MapView() {
   var options = {
     enableHighAccuracy: true,
@@ -21,12 +23,12 @@ export default function MapView() {
     maximumAge: 0,
   };
 
-  const [userPosition, setUserPosition] = useState(position)
+  const [userPosition, setUserPosition] = useState([50.86079, 17.4674])
+  const { position } = useContext(mapPositionContext)
+  const [restaurants, setRestaurants] = useState([])
 
   function success(pos) {
     setUserPosition([pos.coords.latitude, pos.coords.longitude]);
-    console.log("Your current position is:");
-    console.log(userPosition)
   }
 
   function errors(err) {
@@ -38,39 +40,45 @@ export default function MapView() {
       navigator.permissions
         .query({ name: "geolocation" })
         .then(function (result) {
-          console.log(result);
           if (result.state === "granted" || result.state === "prompt") {
             navigator.geolocation.getCurrentPosition(success, errors, options);
           }
         });
-    } else {
-      console.log("Geolocation is not supported by this browser.");
     }
   }, []);
 
+  useEffect(() => {
+    getRestaurants()
+  }, [])
+
   function FlyMapTo() {
-
     const map = useMap()
-
     useEffect(() => {
-      map.flyTo(userPosition)
-    }, [userPosition])
-
-
+      map.flyTo(position)
+    }, [position])
     return null
   }
 
+  const getRestaurants = () => {
+    fetch(`${config.API_URL}/restaurantnames/`)
+      .then((response) => response.json())
+      .then((data) => {
+        setRestaurants(data);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }
+
   return (
-    <MapContainer className="map" center={userPosition} zoom={14} scrollWheelZoom={true}>
+    <MapContainer className="map" center={userPosition} zoom={16} scrollWheelZoom={true}>
       <FlyMapTo />
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Marker position={position}>
-        <Popup>
-          A pretty CSS3 popup. <br /> Easily customizable.
-        </Popup>
-      </Marker>
+      {restaurants.map((restaurant) => (
+        <DetailsMarker position={restaurant.location_id} restaurantname={restaurant.name} restaurantid={restaurant.id}/>
+      ))}
     </MapContainer>
   );
 }
