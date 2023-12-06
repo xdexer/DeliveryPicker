@@ -1,8 +1,10 @@
 import json
 from pathlib import Path
 from typing import Dict
-from logic.models import Cuisine, Restaurant, Location
+from logic.models import Cuisine, Restaurant, Location, Promotion, DeliveryPicker
+from random import randrange
 
+from pprint import pprint
 
 
 def get_cuisines(data: dict) -> Dict:
@@ -34,8 +36,46 @@ def get_restaurant_data(data: dict) -> Dict:
     return locations, restaurants
 
 
+def get_promotions(cuisines: list) -> Dict:
+    PROMOTION_DETAILS = [
+        'Get one {} get one free',
+        'Save 20% on {}'
+    ]
+    promotions = {}
 
-def load_to_django(cuisines, locations, restaurants):
+    for x in range(50):
+        promotions.setdefault(
+            PROMOTION_DETAILS[randrange(len(PROMOTION_DETAILS))].format(cuisines[randrange(len(cuisines))]),
+            f'{randrange(10, 31)}.12.2023'
+        )
+
+    return promotions
+
+
+
+def get_delivery_pickers(promotions) -> Dict:
+    DELIVERY_SERVICES = ['uber', 'pyszne', 'wolt', 'glovo']
+    
+    delivery_pickers = []
+
+    for service in DELIVERY_SERVICES:
+        delivery_pickers.append(
+            {
+                'name': service,
+                'phone_number': randrange(10000000, 999999999),
+                'delivery_cost': f'{randrange(5,10)}.{randrange(10, 99)}',
+                'service_cost': f'{randrange(1,4)}.{randrange(10, 99)}',
+                'promotion_id': promotions[randrange(len(promotions))]
+            }
+        )
+
+    return delivery_pickers
+
+
+
+
+
+def load_to_django(cuisines, locations, restaurants, promotions, delivery_pickers):
     for cuisine in cuisines:
         if not Cuisine.objects.filter(name = cuisine).exists():
             new_cuisine = Cuisine(name=cuisine)
@@ -63,8 +103,10 @@ def load_to_django(cuisines, locations, restaurants):
                 new_restaurant.cuisine_id.add(Cuisine.objects.get(name=cuisine))
             new_restaurant.save()
 
+    for promotion, valid_unitl in promotions.items():
+        if not Promotion.objects.filter(details=promotion):
+            
 
-        
 
 
 def run():
@@ -72,9 +114,13 @@ def run():
     data = json.loads(data)
     
     cuisines = get_cuisines(data['aggregates']['cuisines'])
-    locations, restaurants = get_restaurant_data(data['restaurants'])
+    promotions = get_promotions(list(cuisines.keys()))
 
-    load_to_django(cuisines, locations, restaurants)
+    locations, restaurants = get_restaurant_data(data['restaurants'])
+    delivery_pickers = get_delivery_pickers(list(promotions))
+
+
+    load_to_django(cuisines, locations, restaurants, promotions, delivery_pickers)
 
 
 if __name__ in ('__main__', 'django.core.management.commands.shell'):
