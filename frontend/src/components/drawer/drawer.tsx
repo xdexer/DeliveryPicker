@@ -11,7 +11,6 @@ import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import Pagination from '@mui/material/Pagination';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
@@ -68,16 +67,13 @@ export default function PersistentLeftDrawer() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
   const [restaurantFilter, setRestaurantFilter] = React.useState("");
-  const [page, setPage] = React.useState(1);
   const [distance, setDistance] = React.useState('0');
 
   const handleChange = (event: SelectChangeEvent) => {
     setDistance(event.target.value);
   };
 
-  const handlePaginationChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
-  };
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -163,10 +159,7 @@ export default function PersistentLeftDrawer() {
         </Box>
 
         <Divider textAlign='center'><Chip label="Restaurants" /></Divider>
-        <ResultsList filterValue={restaurantFilter} />
-        <Divider />
-
-        <Pagination count={10} page={page} onChange={handlePaginationChange} />
+        <ResultsList filterValue={restaurantFilter} distance={distance}/>
       </Drawer>
     </Box>
   );

@@ -24,15 +24,20 @@ interface Restaurant {
     location_id: Location
 }
 
-interface DeliveryPicker {
+
+interface RestaurantDetails {
     id: number,
-    restaurant_id: Restaurant,
-    promotion_id: Promotion,
     name: string,
-    phone_number: string,
-    delivery_cost: number,
-    service_cost: number,
-    resource_url: string
+    promotion_id: Promotion,
+    cuisine_id: Array<Cuisine>,
+    location_id: Location
 }
 
-export type { Cuisine, DeliveryPicker, Location, Promotion, Restaurant }
+interface DeliveryPicker {
+    name: string,
+    promotion_id: Promotion,
+    delivery_cost: number,
+    service_cost: number
+}
+
+export type { Cuisine, DeliveryPicker, Location, Promotion, Restaurant, RestaurantDetails }

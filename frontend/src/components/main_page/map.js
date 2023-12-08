@@ -24,7 +24,7 @@ export default function MapView() {
   };
 
   const [userPosition, setUserPosition] = useState([50.86079, 17.4674])
-  const { position } = useContext(mapPositionContext)
+  const { position, setPosition } = useContext(mapPositionContext)
   const [restaurants, setRestaurants] = useState([])
 
   function success(pos) {
@@ -50,6 +50,10 @@ export default function MapView() {
   useEffect(() => {
     getRestaurants()
   }, [])
+
+  useEffect(() => {
+    setPosition(userPosition)
+  }, [userPosition])
 
   function FlyMapTo() {
     const map = useMap()
@@ -77,7 +81,7 @@ export default function MapView() {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {restaurants.map((restaurant) => (
-        <DetailsMarker position={restaurant.location_id} restaurantname={restaurant.name} restaurantid={restaurant.id}/>
+        <DetailsMarker markerposition={restaurant.location_id} restaurantname={restaurant.name} restaurantid={restaurant.id}/>
       ))}
     </MapContainer>
   );
