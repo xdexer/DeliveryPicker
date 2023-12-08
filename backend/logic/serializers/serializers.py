@@ -38,7 +38,7 @@ class DeliveryPickerSerializer(serializers.ModelSerializer):
     promotion_id = PromotionSerializer()
     class Meta:
         model = DeliveryPicker
-        fields = ['name', 'promotion_id']
+        fields = ['name', 'promotion_id', 'delivery_cost', 'service_cost']
 
 
 class RestaurantsNameSerializer(serializers.ModelSerializer):
