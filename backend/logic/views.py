@@ -1,4 +1,4 @@
-from .filters import RestaurantFilter, RestaurantLocationFilter
+from .filters import RestaurantFilter, RestaurantLocationFilter, DeliveryPickerFilter
 from rest_framework import viewsets
 from .models import *
 from .serializers.serializers import *
@@ -16,22 +16,10 @@ class RestaurantNamesViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = RestaurantLocationFilter
 
 
-class CuisineListRetrieveViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Restaurant.objects.all()
-    serializer_class = CuisineSerializer
-
-
-class PromotionListRetrieveViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Restaurant.objects.all()
-    serializer_class = PromotionSerializer
-
-
-class LocationListRetrieveViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Restaurant.objects.all()
-    serializer_class = LocationSerializer
-
-
 class DeliveryPickerListRetrieveViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Restaurant.objects.all()
+    queryset = DeliveryPicker.objects.all()
     serializer_class = DeliveryPickerSerializer
+    filterset_class = DeliveryPickerFilter
+    
+
     
