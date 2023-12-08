@@ -25,8 +25,9 @@ class PromotionSerializer(serializers.ModelSerializer):
 
 class RestaurantSerializer(serializers.ModelSerializer):
     promotion_id = PromotionSerializer()
-    cuisine_id = CuisineSerializer()
-    location_id = LocationSerializer() 
+    cuisine_id = CuisineSerializer(many=True)
+    location_id = LocationSerializer()
+
 
     class Meta:
         model = Restaurant
@@ -35,10 +36,9 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
 class DeliveryPickerSerializer(serializers.ModelSerializer):
     promotion_id = PromotionSerializer()
-    
     class Meta:
         model = DeliveryPicker
-        fields = '__all__'
+        fields = ['name', 'promotion_id']
 
 
 class RestaurantsNameSerializer(serializers.ModelSerializer):
@@ -46,4 +46,4 @@ class RestaurantsNameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Restaurant
-        fields = ['name', 'location_id']
+        fields = ['name', 'location_id', 'id']

@@ -1,5 +1,5 @@
 import django_filters
-from .models import Restaurant
+from .models import Restaurant, DeliveryPicker
 from geopy import distance
 
 
@@ -41,4 +41,16 @@ class RestaurantFilter(django_filters.FilterSet):
 
     class Meta:
         model = Restaurant
+        fields = ['name']
+
+
+class DeliveryPickerFilter(django_filters.FilterSet):
+
+    def get_pickers_with_restaurant(self, queryset, name, value):
+        return DeliveryPicker.objects.filter(restaurant_id=value)
+    
+    restaurant_id = django_filters.NumberFilter(method='get_pickers_with_restaurant')
+
+    class Meta:
+        model = DeliveryPicker
         fields = ['name']
